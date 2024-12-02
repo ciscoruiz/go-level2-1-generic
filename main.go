@@ -1,48 +1,22 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
 
-func AnyOf[T comparable](values []T, yield func(T) bool) bool {
-	for _, t := range values {
-		if yield(t) {
-			return true
-		}
-	}
-	return false
-}
-
-func FindIf[T comparable](values []T, yield func(T) bool) int {
-	for index, t := range values {
-		if yield(t) {
-			return index
-		}
-	}
-	return -1
-}
-
-func AdjacentFind[T comparable](values []T, yield func(T, T) bool) int {
-	len := len(values)
-
-	if len == 0 {
-		return -1
-	}
-
-	previous := values[0]
-
-	for index := 1; index < len; index++ {
-		if yield(previous, values[index]) {
-			return index
-		}
-		previous = values[index]
-	}
-	return -1
-}
+	"github.com/ciscoruiz/go-level2-1-generic/generic"
+)
 
 func equalToFiveInt(value int) bool {
 	return value == 5
 }
 func equalToTenInt(value int) bool {
 	return value == 10
+}
+func equalToTwentyTwoInt(value int) bool {
+	return value == 22
+}
+func equalToOneHundredInt(value int) bool {
+	return value == 100
 }
 
 func greatherThanFiveInt(value int) bool {
@@ -59,16 +33,27 @@ func areAdjacentsPlusTen(first int, second int) bool {
 func main() {
 	integers := []int{10, 20, 30, 50, 10, 20}
 
-	fmt.Printf("Exists 5: %v\n", AnyOf(integers, equalToFiveInt))
-	fmt.Printf("Exists 10: %v\n", AnyOf(integers, equalToTenInt))
-	fmt.Printf("Greather that 5: %v\n", AnyOf(integers, greatherThanFiveInt))
+	fmt.Printf("Exists 5: %v\n", generic.AnyOf(integers, equalToFiveInt))
+	fmt.Printf("Exists 10: %v\n", generic.AnyOf(integers, equalToTenInt))
+	fmt.Printf("Greather that 5: %v\n", generic.AnyOf(integers, greatherThanFiveInt))
 
-	fmt.Printf("Index for 5: %v\n", FindIf(integers, equalToFiveInt))
-	fmt.Printf("Index for 10: %v\n", FindIf(integers, equalToTenInt))
+	fmt.Printf("Index for 5: %v\n", generic.FindIf(integers, equalToFiveInt))
+	fmt.Printf("Index for 10: %v\n", generic.FindIf(integers, equalToTenInt))
 
 	adjacents := []int{10, 11, 12, 13, 14, 15}
-	fmt.Printf("Index-adjacent for adjacents: %v\n", AdjacentFind(adjacents, areAdjacentsPlusOne))
-	fmt.Printf("Index-adjacent for adjacents-ten: %v\n", AdjacentFind(integers, areAdjacentsPlusTen))
-	fmt.Printf("Index-adjacent for adjacents: %v\n", AdjacentFind(adjacents, areAdjacentsPlusTen))
+	fmt.Printf("Index-adjacent for adjacents: %v\n", generic.AdjacentFind(adjacents, areAdjacentsPlusOne))
+	fmt.Printf("Index-adjacent for adjacents-ten: %v\n", generic.AdjacentFind(integers, areAdjacentsPlusTen))
+	fmt.Printf("Index-adjacent for adjacents: %v\n", generic.AdjacentFind(adjacents, areAdjacentsPlusTen))
 
+	fmt.Printf("Are equals: %v\n", generic.Equal(adjacents, integers))
+	fmt.Printf("Are equals: %v\n", generic.Equal(adjacents, adjacents))
+
+	fmt.Printf("Replace by 100: %v\n", generic.ReplaceIf(adjacents, 22, equalToOneHundredInt))
+	fmt.Printf("Replace by 10: %v values=%v\n", generic.ReplaceIf(integers, 22, equalToTenInt), integers)
+
+	fmt.Printf("Remove-if 100: %v\n", generic.RemoveIf(adjacents, equalToOneHundredInt))
+	fmt.Printf("Remove by 22: %v values=%v\n", generic.RemoveIf(integers, equalToTwentyTwoInt), integers)
+
+	fmt.Printf("Sorted: %v result=%v\n", adjacents, generic.IsSorted(adjacents))
+	fmt.Printf("Sorted: %v result=%v\n", integers, generic.IsSorted(integers))
 }
